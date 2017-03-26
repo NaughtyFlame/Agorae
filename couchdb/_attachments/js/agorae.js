@@ -1019,13 +1019,24 @@
                  .attr("attributename", name).attr("attributevalue", v);
         var protocol = "";
         try{ protocol = $.url.setUrl(v).attr("protocol"); } catch(e){}
-        if(protocol == "http" || protocol == "https" || protocol == "ftp" || protocol == "sftp")
+        if((protocol == "http" || protocol == "https" || protocol == "ftp" || protocol == "sftp") && name !="thumbnail")
         {
           //The attribute value is an URL
           el.addClass('attribute');
           var el_href = $('<a></a>').text(name).attr('href', v).attr('attributename', name).addClass('editable');
           el.append(el_href);
           $('ul#local-resource').append(el);
+          //var elim = $('<img id="thumbnail">').attr("attributename", name).attr("src",v);
+          //$('#img-thumbnail').append(elim)
+        }
+        else if(name == "thumbnail")
+        { 
+          //To display the thumbnail
+          var el_img = $('<img id="thumbnail">').attr("src",v);
+          var el = $('<img class="del ctl hide" src="css/blitzer/images/delete.png">')
+                   .attr("attributename", name).attr("attributevalue", v);       
+          $('div#img-thumbnail').append(el).append(el_img);
+
         }
         else
         {
