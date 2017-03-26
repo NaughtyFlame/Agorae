@@ -458,8 +458,12 @@
       var itemUrl = serverUri + 'item/' + corpusID + '/' + item.id; 
       var el = $('<li><img class="del ctl hide" src="css/blitzer/images/delete.png"><span class="editable">' 
                 + item.name + '</span></li>').attr("id", item.id).attr("uri", itemUrl);
-      $('ul#item').append(el);
+      var el_img = $('<img id="thumbnail" >').attr("src",item.thumbnail);
+
+      $('ul#item').append(el).append(el_img);
     };
+
+
     function createItem(){
       var uri = $.getUri();
       $.agorae.createItemWithinCorpus(uri, 'Sans nom', function(item){
