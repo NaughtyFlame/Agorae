@@ -225,7 +225,8 @@ p.h2 img{
 ul.links li, ul.editing li {
   color: #999;
 }
-ul.links li span{
+ul.links li span, div.links div p{
+  
   color: #666;
   font-weight: bold;
   cursor: pointer;
@@ -369,7 +370,18 @@ ul.search-condition button{
   float: right;
 }
 
-#thumbnail{
-  width: 60px;
-  height: 75px;
+#thumbnail-mini{  
+  width: 120px;
+  height: 150px;
+}
+
+#thumbnail-normal{
+  width: 240px;
+  height: 300px;
+}
+
+div.item-section{
+  float:left;
+  text-align: center;
+  width: 200px;
 }

@@ -268,8 +268,8 @@
       $('div.index div.corpus-list img.add').die().live('click', createCorpus);
       $('div.index ul#corpus li[uri] span').die().live('click', onCorpusClick);
       $('div.index ul#corpus img.del').die().live('click', deleteObject);
-      
-    	$('div.index div.viewpoint-list img.add').bind('click',createViewpoint);
+   	
+      $('div.index div.viewpoint-list img.add').bind('click',createViewpoint);
     	$('div.index ul#viewpoint img.del').die().live('click', deleteObject);
     	$('div.index ul#viewpoint li[uri] span').die().live('click', onViewpointClick);
     }
@@ -449,18 +449,18 @@
         $.agorae.pagehelper.toggle(false);
       $('div.corpus div.item-list img.add').bind('click', createItem);
     	$('div.corpus div.item-list img.del').die().live('click', deleteItem);
-    	$('div.corpus ul#item li[uri] span').die().live('click', onItemClick);
+      $('div.corpus div.item-section[uri] p').die().live('click', onItemClick);
     };
     function appendItem(item){
       var uri = $.getUri();
       var serverUri = $.agorae.getServerUri(uri);
       var corpusID = $.agorae.getDocumentID(uri);
-      var itemUrl = serverUri + 'item/' + corpusID + '/' + item.id; 
-      var el = $('<li><img class="del ctl hide" src="css/blitzer/images/delete.png"><span class="editable">' 
-                + item.name + '</span></li>').attr("id", item.id).attr("uri", itemUrl);
-      var el_img = $('<img id="thumbnail" >').attr("src",item.thumbnail);
+      var itemUrl = serverUri + 'item/' + corpusID + '/' + item.id;
+      var el = $('<div class="item-section"><img class="del ctl hide" src="css/blitzer/images/delete.png"></div>').attr("id", item.id).attr("uri", itemUrl);
 
-      $('ul#item').append(el).append(el_img);
+      var el_img = $('<img id="thumbnail-mini" >').attr("src",item.thumbnail);
+      el = el.append(el_img).append('<p class="editable">'+ item.name + '</p>');
+      $('div#item').append(el);
     };
 
 
@@ -1036,7 +1036,7 @@
         else if(name == "thumbnail")
         { 
           //To display the thumbnail
-          var el_img = $('<img id="thumbnail">').attr("src",v);
+          var el_img = $('<img id="thumbnail-normal">').attr("src",v);
           var el = $('<img class="del ctl hide" src="css/blitzer/images/delete.png">')
                    .attr("attributename", name).attr("attributevalue", v);       
           $('div#img-thumbnail').append(el).append(el_img);
