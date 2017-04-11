@@ -283,6 +283,7 @@
         $('ul#corpus').append(el);
       });
     };
+
     function appendViewpoint(idx, viewpointUrl, viewpoint, editable){
       if(!viewpoint){
         var showViewpoint = function(viewpoint){
@@ -334,6 +335,7 @@
         $.agorae.pagehelper.checkController();
       });
     };
+
     function onCorpusClick(){
       if (!isToggleOn()) {
         var uri = $(this).parent().attr('uri');
@@ -434,14 +436,21 @@
   function CorpusPage(){
     this.init = function(){
       var uri = $.getUri();
-      $.agorae.getCorpus(uri, function(corpus){
-        var bars = [{'uri': '#', 'name': 'Accueil'}];
-        bars.push({'name': corpus.name + ''});
-        $.agorae.pagehelper.navigatorBar(bars);
-        $.each($.sortByName($.toArray(corpus)), function(i, item) {
-          appendItem(item);
+      var corpusID = $.agorae.getDocumentID(uri);
+      for(var i=0, server; server = $.agorae.config.servers[i]; i++)
+      {
+        uri = server + "corpus/" + corpusID
+        $.agorae.getCorpus(uri, function(corpus){
+          var bars = [{'uri': '#', 'name': 'Accueil'}];
+          bars.push({'name': corpus.name + ''});
+          $.agorae.pagehelper.navigatorBar(bars);
+          $.each($.sortByName($.toArray(corpus)), function(i, item) {
+            appendItem(item);
+          });
         });
-      });
+      }
+      
+      
 
       if(typeof($.agorae.config.servers[0]) == "string" && uri.indexOf($.agorae.config.servers[0]) == 0)
         $.agorae.pagehelper.toggle(true);
@@ -462,7 +471,6 @@
       el = el.append(el_img).append('<p class="editable">'+ item.name + '</p>');
       $('div#item').append(el);
     };
-
 
     function createItem(){
       var uri = $.getUri();

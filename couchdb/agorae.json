@@ -1,7 +1,7 @@
 {
     "servers": [    	
-    	"http://127.0.0.1:5984/argos/_design/argos/_rewrite/",
-    	"http://127.0.0.1:1337/"
+    	"http://127.0.0.1:5984/argos_base_1/_design/argos/_rewrite/",
+    	"http://127.0.0.1:5984/argos_base_2/_design/argos/_rewrite/"
     ],
     "auth": "http://127.0.0.1:5984/_session",
     "viewpoints": [],
