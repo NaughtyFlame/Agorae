@@ -1,10 +1,11 @@
 {
     "servers": [    	
-    	"http://127.0.0.1:5984/argos/_design/argos/_rewrite/"
+    	"http://127.0.0.1:5984/argos/_design/argos/_rewrite/",
+    	"http://127.0.0.1:1337/"
     ],
     "auth": "http://127.0.0.1:5984/_session",
-    "viewpoints": ["f45fedd7a837590dc1a0d394ad0047e4"],
-    "corpora" : ["faculty","student","f45fedd7a837590dc1a0d394ad001a56"],
+    "viewpoints": [],
+    "corpora" : ["faculty","student"],
     "header": "<a href='/' style=\"font-size: 260%;color:#FFF;text-decoration:none;\">Tech-CICO</a><br><span style=\"font-size: 130%; font-style: italic;\">Documents partagés de Tech-CICO</span>",
     "footer": "<span>Powered by<a href=\"http://hypertopic.org/Knowledge_management.html\">AGORAE : Espace de construction coopérative de cartes de thèmes</a><br>Copyright © 2010</span>"
 }
