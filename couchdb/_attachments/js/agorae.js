@@ -885,35 +885,43 @@
   function ItemPage(){
     this.init = function(){
       var uri = $.getUri();
-      $.agorae.getItem(uri, function(item){
-        $.log(item);
-        var bars = [{'uri': '#', 'name': 'Accueil'}];
-        bars.push({'name': item.name + ''});
-        $.agorae.pagehelper.navigatorBar(bars);
-        var reserved = ["corpus", "id", "highlight", "name", "resource", "topic", "_attachments", "_id"];
-        for(var n in item){
-          if(reserved.indexOf(n) >= 0) continue;
-          appendAttribute(n, item[n]);
-        }
-        
-        if(item.resource)
-          appendRemoteResource(item.resource);
-        if(item._attachments)
-          appendAttachment(item._attachments[0]);
-        if(item.topic)
-          $.each(item.topic, appendTopic);
-        if(item.corpus){
-          var prefixUrl = $.agorae.getServerUri(uri);
-          var corpusUrl = prefixUrl + "corpus/" + item.corpus;
-          $.agorae.getCorpus(corpusUrl, function(corpus){
-            var bars = [{'uri': '#', 'name': 'Accueil'}];
-            bars.push({'uri': '#' + corpusUrl, 'name': corpus.name + ''});
-            bars.push({'name': item.name + ''});
-            $.agorae.pagehelper.navigatorBar(bars);
-          })
-        }
-        onEditOff();
-      });
+      var parts = uri.split("/");
+      var itemID = parts.pop();
+      var corpusID = parts.pop();
+
+      for(var i=0, server; server = $.agorae.config.servers[i]; i++){
+        uri = server + 'item/' + corpusID + '/' + itemID; 
+        $.agorae.getItem(uri, function(item){
+          $.log(item);
+          var bars = [{'uri': '#', 'name': 'Accueil'}];
+          bars.push({'name': item.name + ''});
+          $.agorae.pagehelper.navigatorBar(bars);
+          var reserved = ["corpus", "id", "highlight", "name", "resource", "topic", "_attachments", "_id"];
+          for(var n in item){
+            if(reserved.indexOf(n) >= 0) continue;
+            appendAttribute(n, item[n]);
+          }
+          
+          if(item.resource)
+            appendRemoteResource(item.resource);
+          if(item._attachments)
+            appendAttachment(item._attachments[0]);
+          if(item.topic)
+            $.each(item.topic, appendTopic);
+          if(item.corpus){
+            var prefixUrl = $.agorae.getServerUri(uri);
+            var corpusUrl = prefixUrl + "corpus/" + item.corpus;
+            $.agorae.getCorpus(corpusUrl, function(corpus){
+              var bars = [{'uri': '#', 'name': 'Accueil'}];
+              bars.push({'uri': '#' + corpusUrl, 'name': corpus.name + ''});
+              bars.push({'name': item.name + ''});
+              $.agorae.pagehelper.navigatorBar(bars);
+            })
+          }
+          onEditOff();
+        });        
+      }
+
 
       if(uri.indexOf($.agorae.config.servers[0]) == 0)
         $.agorae.pagehelper.toggle(true, onEditOn, onEditOff);
