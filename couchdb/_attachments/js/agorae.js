@@ -437,6 +437,7 @@
     this.init = function(){
       var uri = $.getUri();
       var corpusID = $.agorae.getDocumentID(uri);
+      var liste_item = [];
       for(var i=0, server; server = $.agorae.config.servers[i]; i++)
       {
         uri = server + "corpus/" + corpusID
@@ -445,12 +446,14 @@
           bars.push({'name': corpus.name + ''});
           $.agorae.pagehelper.navigatorBar(bars);
           $.each($.sortByName($.toArray(corpus)), function(i, item) {
-            appendItem(item);
+            if(!liste_item.includes(item.id)){
+              appendItem(item);
+              liste_item.push(item.id);
+            }            
           });
         });
       }
-      
-      
+     
 
       if(typeof($.agorae.config.servers[0]) == "string" && uri.indexOf($.agorae.config.servers[0]) == 0)
         $.agorae.pagehelper.toggle(true);
