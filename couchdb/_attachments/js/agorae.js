@@ -319,6 +319,7 @@
           for(var i=0, corpus; corpus = user.corpus[i]; i++){
             $('ul#corpus').find('li#' + corpus.id).hide().remove();
             var corpusUrl = server + 'corpus/' + corpus.id;
+            //var corpusUrl = 'corpus/' + corpus.id;
             var el = $('<li><img class="del ctl hide" src="css/blitzer/images/delete.png"><span class="editable">' 
                       + corpus.name + '</span></li>').attr("id", corpus.id).attr("uri", corpusUrl);
             $('ul#corpus').append(el);
@@ -453,7 +454,9 @@
           });
         });
       }
-     
+     //test editable
+      $.agorae.pagehelper.toggle(true);
+      
 
       if(typeof($.agorae.config.servers[0]) == "string" && uri.indexOf($.agorae.config.servers[0]) == 0)
         $.agorae.pagehelper.toggle(true);
@@ -477,6 +480,9 @@
 
     function createItem(){
       var uri = $.getUri();
+      var corpusID = $.agorae.getDocumentID(uri);
+      //create new item in second base.
+      uri = $.agorae.config.servers[1] + "corpus/" + corpusID
       $.agorae.createItemWithinCorpus(uri, 'Sans nom', function(item){
         appendItem(item);
         $.agorae.pagehelper.checkController();
@@ -558,6 +564,8 @@
           $.each($.sortByName(viewpoint.upper), appendTopic);
       });
 
+      //test editable
+      $.agorae.pagehelper.toggle(true);
       if(typeof($.agorae.config.servers[0]) == "string" && uri.indexOf($.agorae.config.servers[0]) == 0)
         $.agorae.pagehelper.toggle(true);
       else
@@ -650,7 +658,9 @@
         if(topic.item)
           $.each($.sortByName(topic.item), appendItem);
       });
-
+      //test editable
+      $.agorae.pagehelper.toggle(true);
+      
       if(typeof($.agorae.config.servers[0]) == "string" && uri.indexOf($.agorae.config.servers[0]) == 0)
         $.agorae.pagehelper.toggle(true);
       else
@@ -923,7 +933,8 @@
       }
 
 
-      if(uri.indexOf($.agorae.config.servers[0]) == 0)
+      //test editable
+      if(uri.indexOf($.agorae.config.servers[1]) == 0)
         $.agorae.pagehelper.toggle(true, onEditOn, onEditOff);
       else
         $.agorae.pagehelper.toggle(false, onEditOn, onEditOff);
@@ -1019,6 +1030,12 @@
             return;
           }
           uri = $.getUri();
+          //add addattribute dans second base
+          var parts = uri.split("/");
+          var itemID = parts.pop();
+          var corpusID = parts.pop();
+          uri = $.agorae.config.servers[1] + 'item/' + corpusID + '/' + itemID;
+
           $.agorae.describeItem(uri, data.attributename, data.attributevalue, appendAttribute);
           callback();
           $.agorae.pagehelper.checkController();
