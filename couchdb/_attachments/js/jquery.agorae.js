@@ -276,6 +276,15 @@
         error: error
       });
     },
+    checkItem:function(itemUrl){      
+      $.agorae.httpSend(itemUrl,
+      {
+        type: "GET",
+        cache: false,
+        success: true,
+        error: false
+      });
+    },
     getViewpoint: function(viewpointUrl, callback){
       $.agorae.httpSend(viewpointUrl,
       {
