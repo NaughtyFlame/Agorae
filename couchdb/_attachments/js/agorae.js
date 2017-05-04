@@ -482,7 +482,10 @@
       var uri = $.getUri();
       var corpusID = $.agorae.getDocumentID(uri);
       //create new item in second base.
-      uri = $.agorae.config.servers[1] + "corpus/" + corpusID
+      if($.agorae.config.servers.length>1){
+        uri = $.agorae.config.servers[1] + "corpus/" + corpusID
+      }
+      
       $.agorae.createItemWithinCorpus(uri, 'Sans nom', function(item){
         appendItem(item);
         $.agorae.pagehelper.checkController();
@@ -1014,6 +1017,15 @@
         $('div.remote-resource-list img.add').removeClass('ctl').hide();
       else
         $('div.remote-resource-list img.add').addClass('ctl').show();
+      if($.agorae.config.servers.length > 1){
+        
+      }
+      uri = $.getUri();
+      var parts = uri.split("/");
+      var itemID = parts.pop();
+      var corpusID = parts.pop();
+      uricheck = $.agorae.config.servers[1] + 'item/' + corpusID + '/' + itemID;          
+      $.agorae.checkItem(uricheck);
     };
     function onEditOff(){
       var attributes = {};
@@ -1067,12 +1079,6 @@
             return;
           }
           uri = $.getUri();
-          //add addattribute dans second base
-          var parts = uri.split("/");
-          var itemID = parts.pop();
-          var corpusID = parts.pop();
-          uri = $.agorae.config.servers[1] + 'item/' + corpusID + '/' + itemID;
-
           $.agorae.describeItem(uri, data.attributename, data.attributevalue, appendAttribute);
           callback();
           $.agorae.pagehelper.checkController();

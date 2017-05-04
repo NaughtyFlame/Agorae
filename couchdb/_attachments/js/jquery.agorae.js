@@ -276,15 +276,6 @@
         error: error
       });
     },
-    checkItem:function(itemUrl){      
-      $.agorae.httpSend(itemUrl,
-      {
-        type: "GET",
-        cache: false,
-        success: true,
-        error: false
-      });
-    },
     getViewpoint: function(viewpointUrl, callback){
       $.agorae.httpSend(viewpointUrl,
       {
@@ -1117,6 +1108,35 @@
           $.showMessage({title: "error", content: "Cannot get:" + itemUrl});
         }
       });
+    },
+    checkItem: function(uri){
+      itemUrl = $.agorae.getDocumentUri(uri);
+      var parts = uri.split("/");
+      var itemID = parts.pop();
+      var corpusID = parts.pop();
+      if($.agorae.getServerUri(uri) == $.agorae.config.servers[0])
+        return;
+      $.ajax({
+        url:itemUrl,
+        type: "GET",
+        cache: false,
+        error: function(){
+          var prefixUrl = $.agorae.config.servers[1];
+          var item = {
+            "_id": itemID,
+            "item_corpus": corpusID,
+            "topics": {}
+          };
+          $.agorae.httpSend(prefixUrl,
+          {
+            type: "POST",
+            data: item,
+            error: function(code, error, reason){
+              $.showMessage({title: "Erreur", content: "Impossible de créer corpus : " + reason});
+            }
+          });          
+        }
+     });
     },
     undescribeItem: function(itemUrl, name, value, success){
       itemUrl = $.agorae.getDocumentUri(itemUrl);
