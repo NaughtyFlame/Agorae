@@ -1093,6 +1093,7 @@
     function modifyAttribute(){
       var attributename = $(this).parent().attr("attributename");
       var attributevalue = $(this).parent().attr("attributevalue");
+      var thisline = $(this).parent();
       var valuelist = [attributename,attributevalue];
       var uri = $.getUri();
       $.showDialog("dialog/_attribute.html", {
@@ -1109,6 +1110,7 @@
           $.agorae.describeItem(uri, data.attributename, data.attributevalue, appendAttribute);
           callback();
           $.agorae.pagehelper.checkController();
+          thisline.remove();
         }
       },valuelist);
     }
