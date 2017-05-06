@@ -20,12 +20,14 @@
     });
   }
 
-  $.showDialog = function(url, options) {
+  $.showDialog = function(url, options, valuelist) {
     options = options || {};
     options.load = options.load || function() {};
     options.cancel = options.cancel || function() {};
     options.validate = options.validate || function() { return true };
     options.submit = options.submit || function() {};
+
+    
 
     var overlay = $('<div id="overlay" style="z-index:1001"></div>')
       .css("opacity", "0");
@@ -70,6 +72,10 @@
           dismiss();
           options.cancel();
         });
+        if(valuelist){
+          $("#upload-form :input[name='attributename']").attr("value",valuelist[0]);
+          $("#upload-form :input[name='attributevalue']").attr("value",valuelist[1]);
+        }
         $("form", dialog).submit(function(e) { // invoke callback on submit
           e.preventDefault();
           dialog.find("div.error").remove().end().find(".error").removeClass("error");

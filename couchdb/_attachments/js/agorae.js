@@ -455,10 +455,9 @@
         });
       }
      //test editable
-      $.agorae.pagehelper.toggle(true);
       
 
-      if(typeof($.agorae.config.servers[0]) == "string" && uri.indexOf($.agorae.config.servers[0]) == 0)
+      if(typeof($.agorae.config.servers[0]) == "string" && uri.indexOf($.agorae.config.servers[1]) == 0)
         $.agorae.pagehelper.toggle(true);
       else
         $.agorae.pagehelper.toggle(false);
@@ -950,19 +949,17 @@
       
       $('div.item div.remote-resource-list img.add').bind('click', attachRemoteResource);
       $('div.item div.remote-resource-list img.unlink').die().live('click', unlinkRemoteResource);
-      $('div.item div.remote-resource-list span.resource').die().live('click', clickRemoteResource);
-      
+      $('div.item div.remote-resource-list span.resource').die().live('click', clickRemoteResource);      
       $('div.item div.local-resource-list li.attribute img.del').die().live('click', deleteAttribute);
       $('div.item div.local-resource-list li.attachment img.del').die().live('click', deleteAttachment);
       $('div.item div.local-resource-list img.add').bind('click', addLocalResource);
       $('div.item div.local-resource-list img.upload').bind('click', uploadAttachment);
-      
       $('div.item div.topic-list img.attach').click(attachTopic);
       $('#topic').on('click', '.unlink', detachTopic);
 
       $('div.item div.attribute-list img.add').click(addAttribute);
       $('div.item div.attribute-list img.del').die().live('click', deleteAttribute);
-
+      $('div.item div.attribute-list img.edit').die().live('click', modifyAttribute);
       $('div.item ul#topic li[uri] span').die().live('click', $.agorae.viewpointpage.onTopicClick);
     };
 
@@ -1018,14 +1015,13 @@
       else
         $('div.remote-resource-list img.add').addClass('ctl').show();
       if($.agorae.config.servers.length > 1){
-        
-      }
-      uri = $.getUri();
-      var parts = uri.split("/");
-      var itemID = parts.pop();
-      var corpusID = parts.pop();
-      uricheck = $.agorae.config.servers[1] + 'item/' + corpusID + '/' + itemID;          
-      $.agorae.checkItem(uricheck);
+        uri = $.getUri();
+        var parts = uri.split("/");
+        var itemID = parts.pop();
+        var corpusID = parts.pop();
+        uricheck = $.agorae.config.servers[1] + 'item/' + corpusID + '/' + itemID;          
+        $.agorae.checkItem(uricheck);
+      }      
     };
     function onEditOff(){
       var attributes = {};
@@ -1094,11 +1090,33 @@
         self.parent().remove();
       });
     };
+    function modifyAttribute(){
+      var attributename = $(this).parent().attr("attributename");
+      var attributevalue = $(this).parent().attr("attributevalue");
+      var valuelist = [attributename,attributevalue];
+      var uri = $.getUri();
+      $.showDialog("dialog/_attribute.html", {
+        submit: function(data, callback) {
+          if (!data.attributename || data.attributename.length == 0) {
+            callback({attributename: "Veuillez saisir le nom d'attribut"});
+            return;
+          }
+          if (!data.attributevalue || data.attributevalue.length == 0) {
+            callback({attributename: "Veuillez saisir le valeur d'attribut"});
+            return;
+          }
+          uri = $.getUri();
+          $.agorae.describeItem(uri, data.attributename, data.attributevalue, appendAttribute);
+          callback();
+          $.agorae.pagehelper.checkController();
+        }
+      },valuelist);
+    }
     function appendAttribute(name, value){
       value = (typeof(value[0]) == "string") ? value : value[0];
       for(var i=0, v; v = value[i]; i++)
       {
-        var el = $('<li><img class="del ctl hide" src="css/blitzer/images/delete.png"></li>')
+        var el = $('<li><img class="del ctl hide" src="css/blitzer/images/delete.png"><img class="edit ctl hide" src="css/blitzer/images/edit.png"></li>')
                  .attr("attributename", name).attr("attributevalue", v);
         var protocol = "";
         try{ protocol = $.url.setUrl(v).attr("protocol"); } catch(e){}
@@ -1109,8 +1127,6 @@
           var el_href = $('<a></a>').text(name).attr('href', v).attr('attributename', name).addClass('editable');
           el.append(el_href);
           $('ul#local-resource').append(el);
-          //var elim = $('<img id="thumbnail">').attr("attributename", name).attr("src",v);
-          //$('#img-thumbnail').append(elim)
         }
         else if(name == "thumbnail")
         { 

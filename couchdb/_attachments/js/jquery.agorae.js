@@ -1090,10 +1090,15 @@
           }
           else
           {
-            if(typeof(item[name]) == "string")
+            item[name] = value;
+            /*
+            if(typeof(item[name]) == "string"){
               item[name] = [item[name], value];
-            else
-              item[name].push(value);
+            }
+            else{
+              //item[name].push(value);
+              item[name]=value;
+            }*/
           }
           $.agorae.httpSend(itemUrl + "?rev=" + item._rev,
           {
