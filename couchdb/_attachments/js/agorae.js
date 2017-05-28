@@ -1019,8 +1019,12 @@
         var parts = uri.split("/");
         var itemID = parts.pop();
         var corpusID = parts.pop();
-        uricheck = $.agorae.config.servers[1] + 'item/' + corpusID + '/' + itemID;          
-        $.agorae.checkItem(uricheck);
+        uricheck = $.agorae.config.servers[1] + 'item/' + corpusID + '/' + itemID;
+        uricheck0 = $.agorae.config.servers[0] + 'item/' + corpusID + '/' + itemID;
+        $.agorae.getItem(uricheck0,function(itemt){
+          var name = itemt["name"];
+          $.agorae.checkItem(uricheck,name);          
+        })          
       }      
     };
     function onEditOff(){
@@ -1667,13 +1671,15 @@
         $('#item-search-result').html('<ul></ul>');
         for(var i=0, item; item = items[i]; i++)
         {
-          
+
           var item_search = $.agorae.config.servers[0] + 'item/' + item.corpus + '/' + item.item;
           $.agorae.getItem(item_search, function(itemt){
+            
             var thumbnail = itemt["thumbnail"];
             var content = "<img class='thumbnail-search' id='thumbnail-mini' src='" + thumbnail + "' style='display:none'>"+"<span>"+item.name+"</span>";
             var el = $('<li style="width:120px"></li>').html(content).attr("id", item.item).attr("name", item.name).attr("corpus", item.corpus);
             $("#item-search-result ul").append(el);
+
           });
           
         }

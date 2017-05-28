@@ -1100,7 +1100,7 @@
               item[name]=value;
             }*/
           }
-          
+
           $.agorae.httpSend(itemUrl + "?rev=" + item._rev,
           {
             type: "PUT",
@@ -1115,7 +1115,7 @@
         }
       });
     },
-    checkItem: function(uri){
+    checkItem: function(uri,itemname){
       itemUrl = $.agorae.getDocumentUri(uri);
       var parts = uri.split("/");
       var itemID = parts.pop();
@@ -1130,6 +1130,7 @@
           var prefixUrl = $.agorae.config.servers[1];
           var item = {
             "_id": itemID,
+            "item_name": itemname,
             "item_corpus": corpusID,
             "topics": {}
           };
