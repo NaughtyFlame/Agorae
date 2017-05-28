@@ -1096,7 +1096,7 @@
       var thisline = $(this).parent();
       var valuelist = [attributename,attributevalue];
       var uri = $.getUri();
-      $.showDialog("dialog/_attribute.html", {
+      $.showDialog("dialog/_modification_attribute.html", {
         submit: function(data, callback) {
           if (!data.attributename || data.attributename.length == 0) {
             callback({attributename: "Veuillez saisir le nom d'attribut"});
@@ -1570,6 +1570,7 @@
       $("#item-search-result ul li").die().live('click', callback);
       $("#item-dialog").dialog('option', "buttons", {
           'Rechercher': doSearch,
+          "Toggle": displaythumbnail,
           'Annuler': function(){
             $("#item-dialog").dialog('close');
           }
@@ -1630,6 +1631,9 @@
         valSelect.append(el);
       }
     };
+    function displaythumbnail(){
+      $(".thumbnail-search").toggle();
+    };
     function doSearch(){
       if($('#item-search-condition').css('display') != 'none')
       {
@@ -1661,8 +1665,15 @@
         $('#item-search-result').html('<ul></ul>');
         for(var i=0, item; item = items[i]; i++)
         {
-          var el = $('<li></li>').html(item.name).attr("id", item.item).attr("name", item.name).attr("corpus", item.corpus);
-          $("#item-search-result ul").append(el);
+          
+          var item_search = $.agorae.config.servers[0] + 'item/' + item.corpus + '/' + item.item;
+          $.agorae.getItem(item_search, function(itemt){
+            var thumbnail = itemt["thumbnail"];
+            var content = "<img class='thumbnail-search' id='thumbnail-mini' src='" + thumbnail + "' style='display:none'>"+"<span>"+item.name+"</span>";
+            var el = $('<li style="width:120px"></li>').html(content).attr("id", item.item).attr("name", item.name).attr("corpus", item.corpus);
+            $("#item-search-result ul").append(el);
+          });
+          
         }
       }
       else
