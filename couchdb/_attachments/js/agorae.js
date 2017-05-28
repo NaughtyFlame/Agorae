@@ -1107,6 +1107,8 @@
             return;
           }
           uri = $.getUri();
+          $.agorae.undescribeItem(uri, attributename, attributevalue, function(){
+          });
           $.agorae.describeItem(uri, data.attributename, data.attributevalue, appendAttribute);
           callback();
           $.agorae.pagehelper.checkController();
