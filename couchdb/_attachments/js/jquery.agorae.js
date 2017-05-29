@@ -1130,7 +1130,7 @@
           var prefixUrl = $.agorae.config.servers[1];
           var item = {
             "_id": itemID,
-            "item_name": itemname,
+            "item_name": itemname[0],
             "item_corpus": corpusID,
             "topics": {}
           };

@@ -328,8 +328,13 @@
     };
     
     function createCorpus(){
-      $.agorae.createCorpus($.agorae.config.servers[0], 'Sans nom', function(corpus){
-        var corpusUrl = $.agorae.config.servers[0] + 'corpus/' + corpus.id;
+      if($.agorae.config.servers.length>1){
+        var server = $.agorae.config.servers[1];
+      }else{
+        var server = $.agorae.config.servers[0];        
+      }
+      $.agorae.createCorpus(server, 'Sans nom', function(corpus){
+        var corpusUrl = server + 'corpus/' + corpus.id;
         var el = $('<li><img class="del ctl hide" src="css/blitzer/images/delete.png"><span class="editable">' 
                   + 'Sans nom' + '</span></li>').attr("id", corpus.id).attr("uri", corpusUrl);
         $('ul#corpus').append(el);
@@ -1078,7 +1083,15 @@
             callback({attributename: "Veuillez saisir le valeur d'attribut"});
             return;
           }
-          uri = $.getUri();
+          if($.agorae.config.servers.length > 1){
+            var uri = $.getUri();
+            var parts = uri.split("/");
+            var itemID = parts.pop();
+            var corpusID = parts.pop();
+            uri = $.agorae.config.servers[1] + 'item/' + corpusID + '/' + itemID;
+          }else{
+            uri = $.getUri();  
+          }
           $.agorae.describeItem(uri, data.attributename, data.attributevalue, appendAttribute);
           callback();
           $.agorae.pagehelper.checkController();
@@ -1088,7 +1101,15 @@
     function deleteAttribute(){
       var attributename = $(this).parent().attr("attributename");
       var attributevalue = $(this).parent().attr("attributevalue");
-      var uri = $.getUri();
+      if($.agorae.config.servers.length > 1){
+        var uri = $.getUri();
+        var parts = uri.split("/");
+        var itemID = parts.pop();
+        var corpusID = parts.pop();
+        uri = $.agorae.config.servers[1] + 'item/' + corpusID + '/' + itemID;
+      }else{
+        uri = $.getUri();  
+      }
       var self = $(this);
       $.agorae.undescribeItem(uri, attributename, attributevalue, function(){
         self.parent().remove();
@@ -1099,7 +1120,15 @@
       var attributevalue = $(this).parent().attr("attributevalue");
       var thisline = $(this).parent();
       var valuelist = [attributename,attributevalue];
-      var uri = $.getUri();
+      if($.agorae.config.servers.length > 1){
+            var uri = $.getUri();
+            var parts = uri.split("/");
+            var itemID = parts.pop();
+            var corpusID = parts.pop();
+            uri = $.agorae.config.servers[1] + 'item/' + corpusID + '/' + itemID;
+      }else{
+            uri = $.getUri();  
+      }
       $.showDialog("dialog/_modification_attribute.html", {
         submit: function(data, callback) {
           if (!data.attributename || data.attributename.length == 0) {
@@ -1110,7 +1139,15 @@
             callback({attributename: "Veuillez saisir le valeur d'attribut"});
             return;
           }
-          uri = $.getUri();
+          if($.agorae.config.servers.length > 1){
+            var uri = $.getUri();
+            var parts = uri.split("/");
+            var itemID = parts.pop();
+            var corpusID = parts.pop();
+            uri = $.agorae.config.servers[1] + 'item/' + corpusID + '/' + itemID;
+          }else{
+            uri = $.getUri();  
+          }
           $.agorae.undescribeItem(uri, attributename, attributevalue, function(){
           });
           $.agorae.describeItem(uri, data.attributename, data.attributevalue, appendAttribute);
