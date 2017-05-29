@@ -1145,6 +1145,56 @@
         }
      });
     },
+    checkCorpus: function(uri,corpusID,corpusName){
+      $.ajax({
+        url: uri,
+        type: "GET",
+        cache: false,
+        success: function(doc){
+          var checklist = JSON.parse(doc);
+          //alert(checklist["rows"].length);
+          if(checklist["rows"].length==0){
+           var corpus = {
+            "_id":corpusID,
+            "corpus_name":corpusName
+           };
+            //corpus._id = corpusID;
+            //corpus.corpus_name = corpusName;
+            //corpus.users = [$.agorae.session.username];
+            $.agorae.httpSend($.agorae.getServerUri(uri),
+            {
+              type: "POST",
+              data: corpus,
+              success: function(doc){
+                success(doc);
+              },
+              error: function(code, error, reason){
+                $.showMessage({title: "Erreur", content: "Impossible de créer corpus : " + reason});
+              }
+            });           
+          }
+        },
+        error: function(){
+          aler("error");
+          var corpus = {};
+          corpus._id = corpusID;
+          corpus.corpus_name = corpusName;
+          //corpus.users = [$.agorae.session.username];
+          $.agorae.httpSend($.agorae.getServerUri(uri),
+          {
+            type: "POST",
+            data: corpus,
+            success: function(doc){
+              success(doc);
+            },
+            error: function(code, error, reason){
+              $.showMessage({title: "Erreur", content: "Impossible de créer corpus : " + reason});
+            }
+          });
+        }
+      });
+
+    },
     undescribeItem: function(itemUrl, name, value, success){
       itemUrl = $.agorae.getDocumentUri(itemUrl);
       $.agorae.httpSend(itemUrl,

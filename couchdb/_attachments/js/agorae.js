@@ -459,6 +459,15 @@
           });
         });
       }
+
+      var uri = $.getUri();
+      var corpusID = $.agorae.getDocumentID(uri);
+      if($.agorae.config.servers.length>1){
+        uri = $.agorae.config.servers[1] + "corpus/" + corpusID;
+        $.agorae.getCorpus($.getUri(),function(corpus){
+          $.agorae.checkCorpus(uri,corpusID,corpus.name);
+        });        
+      }
      //test editable
       
 
@@ -486,8 +495,10 @@
       var uri = $.getUri();
       var corpusID = $.agorae.getDocumentID(uri);
       //create new item in second base.
+
+
       if($.agorae.config.servers.length>1){
-        uri = $.agorae.config.servers[1] + "corpus/" + corpusID
+        uri = $.agorae.config.servers[1] + "corpus/" + corpusID;
       }
       
       $.agorae.createItemWithinCorpus(uri, 'Sans nom', function(item){
