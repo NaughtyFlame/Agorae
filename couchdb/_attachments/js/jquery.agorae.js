@@ -1420,7 +1420,6 @@
           }
         });
       });
-      $.log(items);
       var unique = {};
       var result = [];
       for(var i=0, item; item = items[i]; i++)
@@ -1435,6 +1434,28 @@
           }
         }
       return result;
+    },
+    searchItem_ldap : function(uris){      
+      var items = [], _items ={};
+      $.each(uris, function(idx, uri){
+        $.agorae.httpSend(uri,
+        {
+          type: "GET",
+          async: false,
+          success: function(doc){
+            //$.log(doc);
+            var corpus;
+            for(corpus in doc)
+              break;
+            if(!corpus) return;
+            doc = doc[corpus];            
+            for(var itemID in doc){              
+              items.push({"item":itemID, "name":doc[itemID].name[0], "corpus":corpus });
+            }
+          }
+        });        
+      });
+      return items;
     }
   });
 })(jQuery);

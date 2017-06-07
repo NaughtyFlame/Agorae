@@ -1615,7 +1615,8 @@
         }
       });
       $('#item-search-corpus select').bind('change', corpusChange);
-      $('ul.search-condition select.attributename').die().live('change', onNameChange);
+      //change the way of searching
+      //$('ul.search-condition select.attributename').die().live('change', onNameChange);
       $('ul.search-condition button.plus').die().live('click', showSearchCondition);
       $('ul.search-condition button.minus').die().live('click', removeSearchCondition);
     };
@@ -1643,10 +1644,17 @@
     function showSearchCondition(){
       $.log($.agorae.itemdialog.names);
       var uuid = $.agorae.newUUID();
+      //Search Updating
+      /*
       var el = $('<li style="display: none">Nom : <select class="attributename"><option value=""></option></select>'
                + ' Valeur : <select class="attributevalue"><option value=""></option></select>'
                +'<button class="plus"></button><button class="minus"></button></li>').attr("id", uuid);
-
+      */
+      
+      var el = $('<li style="display: none">Nom : <select class="attributename"><option value=""></option></select>'
+               + ' Valeur : <input class="attributevalue">'
+               +'<button class="plus"></button><button class="minus"></button></li>').attr("id", uuid);
+      
       for(var name in $.agorae.itemdialog.names){
         var option = $('<option></option>').val(name).text(name);
         el.find("select:first").append(option);
@@ -1696,7 +1704,10 @@
             $(this).parent().slideUp({duration: 500, easing: 'easeOutCubic', complete: function(){ li.remove(); }});
         });*/
         var uris = [];
-        $('select.attributevalue','ul.search-condition').each(function(){
+        var uris_ldap = [];
+        $('input.attributevalue','ul.search-condition').each(function(){          
+          //Search Updating
+          /*
           if($(this).val() == "") return;
           var option = $(this).find('option:selected');
           if(!option || option.length <= 0) return;
@@ -1706,16 +1717,40 @@
           {
             var uri = v.uri + "/" + encodeURIComponent(v.attributename) + "/" + encodeURIComponent(v.attributevalue);
             if(uris.indexOf(uri) < 0) uris.push(uri);
+          }*/
+          
+          if($(this).val() == "") return;
+          var corpusName = $('select.corpus option:selected').val();
+          var parts = corpusName.split("/");
+          corpusName = parts.pop();
+          var attributename = $('select.attributename option:selected').val();
+          var attributevalue = $(this).val();
+          
+          for(var i=0, server; server = $.agorae.config.servers[i]; i++)
+          {
+            var uri = server + 'attribute/' + corpusName + '/' + attributename + '/' + attributevalue;
+            if(uris.indexOf(uri) < 0){
+              if($.agorae.config.servers_type[i] == "ldap"){
+                uris_ldap.push(uri);
+              }else{
+                uris.push(uri);
+              }
+            }
           }
+          
         });
-        if(uris.length == 0) return;
+        if(uris.length == 0 && uris_ldap.length == 0) return;
 
         $(this).parents(".ui-dialog").find(".ui-dialog-buttonset").find("button:first span").html("Étape précédente");
         $('#item-search-result').show().html('<img src="css/blitzer/images/loading.gif" style="padding-left: 1em;">');
         $('#item-search-condition').hide();
         $('#item-search-corpus').hide();
-        var items = $.agorae.searchItem(uris);
+        if(uris.length > 0) var items = $.agorae.searchItem(uris);
+        if(uris_ldap.length > 0) var items_ldap = $.agorae.searchItem_ldap(uris_ldap);
+        $.log("items");
         $.log(items);
+        console.log("items_ldap");
+        $.log(items_ldap);
         $('#item-search-result').html('<ul></ul>');
         for(var i=0, item; item = items[i]; i++)
         {
@@ -1728,8 +1763,21 @@
             var el = $('<li style="width:120px"></li>').html(content).attr("id", item.item).attr("name", item.name).attr("corpus", item.corpus);
             $("#item-search-result ul").append(el);
 
-          });
-          
+          });          
+        }
+
+        for(var i=0, item; item = items_ldap[i]; i++)
+        {
+
+          var item_search = $.agorae.config.servers[0] + 'item/' + item.corpus + '/' + item.item;
+          $.agorae.getItem(item_search, function(itemt){
+            
+            var thumbnail = itemt["thumbnail"];
+            var content = "<img class='thumbnail-search' id='thumbnail-mini' src='" + thumbnail + "' style='display:none'>"+"<span>"+item.name+"</span>";
+            var el = $('<li style="width:120px"></li>').html(content).attr("id", item.item).attr("name", item.name).attr("corpus", item.corpus);
+            $("#item-search-result ul").append(el);
+
+          });          
         }
       }
       else
