@@ -340,7 +340,8 @@
       var viewpoint = {};
       viewpoint.viewpoint_name = viewpointName;
       viewpoint.users = new Array($.agorae.session.username);
-      $.agorae.httpSend($.agorae.config.servers[0],
+      var idx_server_Write = $.agorae.config.servers.length - 1;
+      $.agorae.httpSend($.agorae.config.servers[idx_server_Write],
       {
         type: "POST",
         data: viewpoint,
@@ -1263,11 +1264,16 @@
       return result;
     },
     getTopicTree: function(viewpointUrl){
+      //IMPORTANT!!!!!!
+      //On sasir des données d'user dans la base Agorae, Donc, on doit charger l'uri pour vérifier sessoin
       var tree = {"data": []}, tagcloud = {},
           viewpoints = [];
       if(!viewpointUrl){
+        //httpsent to la base qui stocker les données de user. Pour ce projet, on utiliser La base Agorae.
+        var idx_server_authentification = $.agorae.config.server_authentification_admin;
+        var idx_server_Write = $.agorae.config.servers.length - 1;
         if($.agorae.session.username)
-          $.agorae.httpSend($.agorae.config.servers[0] + "user/" + $.agorae.session.username,
+          $.agorae.httpSend($.agorae.config.servers[idx_server_authentification] + "user/" + $.agorae.session.username,
           {
             type: "GET",
             async: false,
@@ -1277,7 +1283,7 @@
               var user = doc[$.agorae.session.username];
               if(user.viewpoint)
               for(var i=0, viewpoint; viewpoint = user.viewpoint[i]; i++)
-                viewpoints.push($.agorae.config.servers[0] + 'viewpoint/' + viewpoint.id);
+                viewpoints.push($.agorae.config.servers[idx_server_Write] + 'viewpoint/' + viewpoint.id);
             }
           });
         if($.agorae.config.viewpoints)
@@ -1285,7 +1291,7 @@
             if(viewpoints.indexOf('http') == 0)
               viewpoints.push(url);
             else
-              viewpoints.push($.agorae.config.servers[0] + 'viewpoint/' + url);
+              viewpoints.push($.agorae.config.servers[idx_server_Write] + 'viewpoint/' + url);
       }
       else
         viewpoints.push(viewpointUrl);

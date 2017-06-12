@@ -254,14 +254,21 @@
         $.showMessage({title: "Erreur", content: "Agorae est mal configuré : le serveur Hypertopic n'est pas indiqué."});
         return false;
       }
+
+      $.agorae.pagehelper.toggle(true);
+
       if($.agorae.config.corpora)
         $.each($.agorae.config.corpora, getCorpus);
       if($.agorae.config.viewpoints)
         $.each($.agorae.config.viewpoints, appendViewpoint);
-      if($.agorae.session.username)
-        $.each($.agorae.config.servers, appendUser);
+      if($.agorae.session.username){
+        // Dans ce partie, on seulement utiliser  la base Agorae pour tester.
 
-      $.agorae.pagehelper.toggle(true);
+        //$.each($.agorae.config.servers, appendUser);
+        appendUser(1,$.agorae.config.servers[1]);
+      }
+
+      
       $.agorae.pagehelper.navigatorBar('<b>Accueil</b>');
 
       //Enable the links
@@ -385,7 +392,8 @@
     
     function createViewpoint(){
       $.agorae.createViewpoint('Sans nom', function(doc){
-        appendViewpoint(0, $.agorae.config.servers[0] + "viewpoint/" + doc.id, doc, true);
+        var idx_server_Write = $.agorae.config.servers.length - 1;
+        appendViewpoint(0, $.agorae.config.servers[idx_server_Write] + "viewpoint/" + doc.id, doc, true);
         $.agorae.pagehelper.checkController();
       });
     };
@@ -584,7 +592,7 @@
 
       //test editable
       $.agorae.pagehelper.toggle(true);
-      if(typeof($.agorae.config.servers[0]) == "string" && uri.indexOf($.agorae.config.servers[0]) == 0)
+      if(typeof($.agorae.config.servers[0]) == "string" && uri.indexOf($.agorae.config.servers[1]) == 0)
         $.agorae.pagehelper.toggle(true);
       else
         $.agorae.pagehelper.toggle(false);
@@ -1035,7 +1043,8 @@
         var parts = uri.split("/");
         var itemID = parts.pop();
         var corpusID = parts.pop();
-        uricheck = $.agorae.config.servers[1] + 'item/' + corpusID + '/' + itemID;
+        var idx_server_Write = $.agorae.config.servers.length - 1;
+        uricheck = $.agorae.config.servers[idx_server_Write] + 'item/' + corpusID + '/' + itemID;
         uricheck0 = $.agorae.config.servers[0] + 'item/' + corpusID + '/' + itemID;
         $.agorae.getItem(uricheck0,function(itemt){
           var name = itemt["name"];
@@ -1400,6 +1409,20 @@
           }
           var uri = $.getUri();
           uri = $.agorae.getDocumentUri(uri);
+          
+          if($.agorae.config.servers.length > 1){
+            uri = $.getUri();
+            var parts = uri.split("/");
+            var itemID = parts.pop();
+            var corpusID = parts.pop();
+            var idx_server_Write = $.agorae.config.servers.length - 1;
+            uri = $.agorae.config.servers[idx_server_Write] + itemID;
+            uricheck0 = $.agorae.config.servers[0] + 'item/' + corpusID + '/' + itemID;
+            $.agorae.getItem(uricheck0,function(itemt){
+              var name = itemt["name"];
+              $.agorae.checkItem(uri,name);          
+            })          
+          }
           $.agorae.tagItem(uri, topics, function(){
             $.agorae.topictree.closeDialog();
             $.each(topics, appendTopic);
