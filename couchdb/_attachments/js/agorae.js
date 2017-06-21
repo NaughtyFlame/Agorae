@@ -676,6 +676,8 @@
   function TopicPage(){
     this.init = function(){
       var uri = $.getUri();
+      //test editable
+      $.agorae.pagehelper.toggle(true);
       getTopicPath(uri, function(path, topic) {
         path.unshift({uri: '#', name: 'Accueil'});
         $.agorae.pagehelper.navigatorBar(path);
@@ -684,14 +686,14 @@
         if(topic.item)
           $.each($.sortByName(topic.item), appendItem);
       });
-      //test editable
-      $.agorae.pagehelper.toggle(true);
       
+      
+      /*
       if(typeof($.agorae.config.servers[0]) == "string" && uri.indexOf($.agorae.config.servers[0]) == 0)
         $.agorae.pagehelper.toggle(true);
       else
         $.agorae.pagehelper.toggle(false);
-
+      */
       $('div.topic div.topic-list img.add').click(createTopic);
       $('div.topic div.topic-list img.del').die().live('click', $.agorae.viewpointpage.deleteTopic);
       $('div.topic div.topic-list img.unlink').die().live('click', unlinkTopic);
@@ -929,7 +931,14 @@
         uri = server + 'item/' + corpusID + '/' + itemID;
         $.agorae.getItem(uri, function(item){
           for (var k in item) {
-            itemList[k] = item[k];
+            if(!(k in itemList)){
+              itemList[k] = item[k];
+            }else{
+              if(k == 'id'|| k == 'corpus' || k == 'name'){
+                continue;
+              }
+              itemList[k].push(item[k]);
+            }
           }
         });
         /* 
@@ -963,6 +972,7 @@
           onEditOff();
         });  */      
       }
+      $.log(itemList);
       showItem(itemList,uri);
 
       //test editable

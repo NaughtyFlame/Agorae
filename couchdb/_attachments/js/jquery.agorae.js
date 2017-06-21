@@ -415,7 +415,14 @@
       if(!$.agorae.config.servers)
         return false;
       var found = false;
-      for(var i = 0, server; server = $.agorae.config.servers[i]; i++){
+
+      if($.agorae.config.servers.length > 1){
+        var idx = 1;
+      }else{
+        var idx = 0;
+      }
+
+      for(var i = idx, server; server = $.agorae.config.servers[i]; i++){
 
         $.agorae.httpSend(server + "viewpoint/" + viewpoint,
         {
